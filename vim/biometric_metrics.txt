@@ -1,0 +1,83 @@
+EER: 0.0007
+RPR: 6
+FAR at EER threshold: 0.0007
+FRR at EER threshold: 0.0007
+EER threshold: 0.0460
+ (RPR): 0.0
+
+RPR distribution: 
+Average genuine score: 0.8210
+Average top impostor score: 0.0204
+Samples with rank > 1: 13
+
+Rank distribution:
+Rank 1: 1406 samples
+Rank 2: 11 samples
+Rank 4: 1 samples
+Rank 6: 1 samples
+
+
+
+This is a very insightful question that gets at the heart of how these metrics measure different aspects of biometric system performance. Let me explain the apparent discrepancy:
+EER/FAR/FRR and RPR measure different things:
+
+EER/FAR/FRR are verification metrics:
+
+
+They measure the system's ability to make a binary decision: "Is this the claimed identity or not?"
+They work with similarity scores and a threshold
+In your case, when someone claims "I am person X" and provides their fingerprint:
+
+If they are person X (genuine attempt), the system correctly accepts them 99.93% of the time
+If they are not person X (impostor attempt), the system correctly rejects them 99.93% of the time
+
+
+
+
+RPR is an identification metric:
+
+
+It measures the system's ability to correctly rank all possible identities
+It works with the ordering of similarity scores across all classes
+In your case, when someone provides a fingerprint without claiming an identity:
+
+The system has to rank all 148 possible identities
+The correct identity is sometimes ranked as low as 6th place
+
+
+
+The seeming contradiction arises because:
+
+Your system is excellent at verifying if a fingerprint matches a claimed identity (very good EER)
+But it's less good at determining the exact identity from all possibilities without a prior claim (suboptimal RPR)
+
+
+
+Exactly! You've understood it perfectly. The RPR value of 6 alone can be misleading because it only tells you the worst-case scenario (the highest rank observed) but doesn't show the full picture of how well your system actually performs.
+Let's break down your rank distribution:
+
+Rank 1: 1406/1419 samples (99.08%) are correctly identified as the top choice
+Rank 2: Only 11/1419 (0.78%) are second choice
+Rank 4: Just 1 sample (0.07%)
+Rank 6: Just 1 sample (0.07%)
+
+This distribution shows that your system is actually performing excellently:
+
+It gets the correct identity as the top choice 99.08% of the time
+Only 13 samples (less than 1%) are not ranked first
+The RPR = 6 is driven by just a single "difficult" sample
+
+This aligns well with your strong EER/FAR/FRR metrics (0.0007) and explains why your system is actually very good at both verification and identification, despite what the RPR alone might suggest.
+For a more complete evaluation, you might want to consider additional metrics like:
+
+Rank-1 recognition rate: 99.08% (1406/1419)
+Cumulative Match Characteristic (CMC) curve:
+
+Rank-1: 99.08%
+Rank-2: 99.86% (1417/1419)
+Rank-4: 99.93% (1418/1419)
+Rank-6: 100% (1419/1419)
+
+
+
+These metrics provide a much more informative picture of your system's identification performance than the RPR alone.
